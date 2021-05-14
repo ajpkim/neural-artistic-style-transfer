@@ -1,0 +1,100 @@
+!<html>
+  <head>
+    <!-- Load @magenta/image -->
+    <script src="https://cdn.jsdelivr.net/npm/@magenta/image@^0.2.1"></script>
+    <!-- Load  TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+  </head>
+  <body>
+    <img id="content" height="256" src="images/content.jpg"/>
+    <img id="style" height="256" src="images/style.jpg"/>
+    <img id="style2" height="256" src="images/style2.jpg"/>
+    <img id="style3" height="256" src="images/style3.jpg"/>
+
+    <h1>..............................</h1>
+    
+    <canvas id="stylized" height="256"></canvas>
+    <script>
+      const model = new mi.ArbitraryStyleTransferNetwork();
+      const contentImg = document.getElementById('content');
+      const styleImg = document.getElementById('style');
+      const styleImg2 = document.getElementById('style2');
+      const styleImg3 = document.getElementById('style3');
+      const stylizedCanvas = document.getElementById('stylized');
+      
+      //////////////////////////////////////////////////
+      // const DEFAULT_STYLE_CHECKPOINT = 'https://storage.googleapis.com/magentadata/js/checkpoints/style/arbitrary/predictor';
+      // const DEFAULT_TRANSFORM_CHECKPOINT = 'https://storage.googleapis.com/magentadata/js/checkpoints/style/arbitrary/transformer';
+      
+      // Works, but needs JSON files and not the deprecated pb files
+      // const initialize = async() => {
+          
+      //  	  [styleNet, transformNet] = await Promise.all([
+      //  	      tf.loadGraphModel(
+      //  		  DEFAULT_STYLE_CHECKPOINT + '/tensorflowjs_model.pb',
+      //  		  DEFAULT_STYLE_CHECKPOINT + '/weights_manifest.json'),
+      //  	      tf.loadGraphModel(
+      //  		  DEFAULT_TRANSFORM_CHECKPOINT + '/tensorflowjs_model.pb',
+      //  		  DEFAULT_TRANSFORM_CHECKPOINT + '/weights_manifest.json'),
+      //  	  ]);
+
+      //  	  initialized = true;
+      //  	  console.log('Initialized Arbitrary Style Transfer network');
+      //  	  return [styleNet, transformNet]
+      // }
+      // let a = initialize()
+
+      async function getStyleParameters(images) {
+	  console.log('getting style parameters...');
+	  if (model.initialized === false) { await model.initialize() }
+	  styles = images.map(image => model.predictStyleParameters(image))
+	  return styles
+      }
+
+      function combineStyles(styles, styleWeights) {
+	  // Normalize the weights and then combine the style representations into a weighted average
+	  let weightSum = styleWeights.reduce((a, b) => { return a + b; });	  
+	  styleWeights = styleWeights.map(strength => { return strength / weightSum; });
+	  let styleRep = tf.zeros([1,1,1,100]);
+	  for (let [style, weight] of styles.map((a,b) => [a, styleWeights[b]])) {
+	      styleRep = styleRep.add(style.mul(weight));
+	  }
+	  return styleRep
+      }
+
+      const getStyle = async images => {
+	  let styles = await getStyleParameters(images);
+
+	  ////////// HACK, cast the style reps to arrays and back to tensors...
+	  arrs = []
+	  for (t of styles) {
+	       arrs.push(t.dataSync());
+	   }
+	  styles = []
+	  for (a of arrs) {
+	       styles.push(tf.tensor4d(a, [1,1,1,100]));
+	   }	      
+	  let style = combineStyles(styles, styleWeights);
+	  //////////
+	  console.log('finished getting style:', style.dataSync());
+	  
+	  return style
+      }
+
+      // Test data
+      let styleWeights = [3,2,1]
+      images = [styleImg, styleImg2, styleImg3]
+      getStyle(images);
+      
+      
+      // From magenta tutorial:
+      // function stylize() {
+      //     model.stylize(contentImg, styleImg).then((imageData) => {
+      //          stylizedCanvas.getContext('2d').putImageData(imageData, 0, 0);
+      //      });
+      // }
+      
+      // model.initialize().then(stylize);
+    </script>
+  </body>
+</html>
