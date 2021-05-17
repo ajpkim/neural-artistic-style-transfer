@@ -1,68 +1,121 @@
 const model = new mi.ArbitraryStyleTransferNetwork();
-const contentImg = document.getElementById('content');
-const styleImg = document.getElementById('style');
-const styleImg2 = document.getElementById('style2');
-const styleImg3 = document.getElementById('style3');
+
+let contentImg = document.getElementById('content');
+let styleImg = document.getElementById('style');
+let styleImg2 = document.getElementById('style2');
+let styleImg3 = document.getElementById('style3');
+
 const stylizedCanvas = document.getElementById('stylized');
+const addStyleImageBtn = document.getElementById('add-style-image-btn');
+const selectStyleList = document.getElementById('style-select');
+const selectContentList = document.getElementById('content-select');
+const styleTransferBtn = document.getElementById('style-transfer-btn');
+
+let contentFileUploader = document.getElementById('content-file-upload');
+let styleFileUploader = document.getElementById('style-file-upload');
+let fileUploader = document.getElementById('file-upload');
+
+//////////////////////////////////////////////////////////////////////
+// Document Management
+
+addStyleImageBtn.addEventListener('click', () => {
+    console.log('yooo');
+});
+
+addStyleImageBtn.addEventListener('click', () => {
+
+});
 
 
-// async function getStyleParameters(images) {
-//     if (model.initialized === false) { await model.initialize() }
-//     let styles = images.map(image => model.predictStyleParameters(image));
-//     return styles
-// }
-
-// function getStyleParameters(images) {
-// 	  return images.map(image => model.predictStyleParameters(image));
-// }
-
-// function combineStyles(styles, styleWeights) {
-//     // Normalize the weights and then combine the style representations into a weighted average
-//     let weightSum = styleWeights.reduce((a, b) => { return a + b; });	  
-//     styleWeights = styleWeights.map(weight => weight  / weightSum );
-
-//     weightedStyles = styles.map(
-//     Need to only work with the predicted ones for some reason
-//     let styleRep = tf.zeros([1,1,1,100]);
-//     for (let [style, weight] of styles.map((a,b) => [a, styleWeights[b]])) {
-// 	styleRep = styleRep.add(style.mul(weight));
-//     })
-//     return styleRep
-// }
-
-// async function getStyle(images, styleWeights) {
-//     let styles = await getStyleParameters(images);
-//     // Recreate the style tensors to fix the issues with operating on the tensors received from network...
-//     styles = styles.map(style => tf.tensor(style.dataSync()).reshape([1,1,1,100]));
-//     let style = combineStyles(styles, styleWeights)
-//     return style
-// }
-
-// async function stylize(contentImg, style) {
-//     console.log('starting');
-    
-//     // Something wrong here...
-//     let stylized = model.produceStylized(contentImg, style);
-//     console.log('here')
-//     return tf.browser.toPixels(stylized)
-// 	.then((bytes) => new ImageData(bytes, stylized.shape[1], stylized.shape[0]))
-// }
-
-
+styleTransferBtn.addEventListener('click', () => {
+    stylize(contentImg, styleImages, styleWeights);
+});
 
 //////////////////////////////////////////////////
+// Handling with separate chains of logic for style/content
+// contentFileUploader.addEventListener('change', () => {
+//     contentImg.src = URL.createObjectURL(contentFileUploader.files[0]);
+// });
+
+// styleFileUploader.addEventListener('change', () => {
+//     processImageUpload(styleFileUploader.files[0])
+// });
+
+
+// selectContentList.addEventListener('change', () => {
+//     let choice = selectContentList.value;
+//     if (choice === 'file-upload') {
+// 	contentFileUploader.click();  // Selection triggers image processing chain 
+//     } else {
+	
+// 	contentImg.src = 'images/' + choice + '.jpg';
+//     }
+// });
+
+// selectStyleList.addEventListener('change', () => {
+//     let choice = selectStyleList.value;
+//     if (choice === 'file-upload') {
+// 	styleFileUploader.click();  // Selection triggers image processing chain 
+//     } else {
+// 	styleImg.src = 'images/' + choice + '.jpg';
+//     }
+// });
+
+//////////////////////////////////////////////////
+// Handling with single pipeline and style/content flag
+
+// @type is 'content' or 'style'
+selectStyleList.addEventListener('change', () => {
+    uploadImage(selectStyleList, 'style');
+});
+
+selectContentList.addEventListener('change', () => {
+    uploadImage(selectContentList, 'content');
+});
+
+function uploadImage(listSelect, type) {
+    let choice = listSelect.value;
+    fileUploader.recent = type;
+    if (choice === 'file-upload') {
+	fileUploader.click();  // Selection triggers image processing chain 
+    } else if (type === 'content') {
+	contentImg.src = 'images/' + choice + '.jpg';
+    } else {
+	styleImg.src = 'images/' + choice + '.jpg';
+    }
+}
+
+fileUploader.addEventListener('change', () => {
+      if (fileUploader.recent === 'content') {
+	contentImg.src = URL.createObjectURL(fileUploader.files[0]);
+    } else {
+	processImageUpload(fileUploader.files[0])
+    }
+});
+
+function processImageUpload(filepath) {
+    let img = new Image();
+    img.onload = () => drawImage(img);
+    img.src = URL.createObjectURL(filepath);
+}
+
+//////////////////////////////////////////////////////////////////////
 // Test data
-model.initialize();
+
 let styleWeights = [3,2,1];
 let styleImages = [styleImg, styleImg2, styleImg3];
 
-function drawImage(imageData) {
-    console.log('drawImage');
-    stylizedCanvas.getContext('2d').putImageData(imageData, 0, 0);
+//////////////////////////////////////////////////////////////////////
+// Style Transfer Functions 
+function drawImage(image) {
+    if (Object.prototype.toString.call(image) === '[object ImageData]') {
+	stylizedCanvas.getContext('2d').putImageData(image, 0, 0);
+    } else if (Object.prototype.toString.call(image) === '[object HTMLImageElement]') {
+	stylizedCanvas.getContext('2d').drawImage(image, 0, 0);
+    }
 }
 
 function getStyle(styleImages, styleWeights) {
-    console.log('getStyle');
     let styles = styleImages.map(image => model.predictStyleParameters(image));
     let weightSum = styleWeights.reduce((a, b) => { return a + b; });	  
     styleWeights = styleWeights.map(weight => weight  / weightSum );
@@ -72,13 +125,13 @@ function getStyle(styleImages, styleWeights) {
 }
 
 function getStyledImageData(contentImg, style) {
-    console.log('getStyledImageData')
     let stylized = model.produceStylized(contentImg, style);
-    return tf.browser.toPixels(stylized)  // // tf.browser.toPixels returns a Promise
+    return tf.browser.toPixels(stylized)
 	.then((bytes) => new ImageData(bytes, stylized.shape[1], stylized.shape[0]));
 }
 
-function stylize(contentImg, styleImages, styleWeight) {
+async function stylize(contentImg, styleImages, styleWeight) {
+    if (model.initialized === false) await model.initialize();
     let style = getStyle(styleImages, styleWeights);
     getStyledImageData(contentImg, style)
 	.then(drawImage)
