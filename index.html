@@ -11,45 +11,40 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
   </head>
   <body>
-    <img id="content" height="256" src="images/content.jpg"/>
-    <img id="style" height="256" src="images/style.jpg"/>
-    <img id="style2" height="256" src="images/style2.jpg"/>
-    <img id="style3" height="256" src="images/style3.jpg"/>
+    
+    <div id="content-image-block">
+      <img id="content-image" height="256" src="images/content.jpg"/>
+      <label for="content-select">Select a Content Image</label>
+      <select id="content-select">
+	<option value="allen-iverson">Allen Iverson</option>
+	<option value="everest">Mt. Everest</option>
+	<option value="file-upload">Upload file</option>
+      </select>
+    </div>
+    
+    <div id="style-images">
+      <div class="style-image-block" id="style-image-block-1">
+	<img class="style-image" id="style-image-1" height="256" src="images/style.jpg"/>
+	<input type="range" min="0" max="10" value="5" class="style-slider">
+	<label for="style-select">Select a Style Image</label>
+	<select class="style-select">
+	  <option value="starry-night">Starry Night</option>
+	  <option value="scream">Scream</option>
+	  <option value="udnie">Udnie</option>
+	  <option value="file-upload">Upload file</option>
+	</select>
+	<button class="remove-style-btn" id="remove-style-btn-1">Remove Style Image</button>
+      </div>
+    </div>    
 
     <button id="add-style-image-btn">Combine Another Style</button>
     <button id="style-transfer-btn">Transfer Style</button>
 
-    <h1>..............................</h1>
-
-    <input type="file" id="content-file-upload" accept="image/*,.pdf">
-    <input type="file" id="style-file-upload" accept="image/*,.pdf">
     <input type="file" id="file-upload" accept="image/*,.pdf">
-    
-    <h1>..............................</h1>
-
-    <label for="stlye-select">Select a Style Image</label>
-    <select id="style-select">
-      <option value="starry-night">Starry Night</option>
-      <option value="scream">Scream</option>
-      <option value="udnie">Udnie</option>
-      <option value="file-upload">Upload file</option>
-    </select>
-    
-    <h1>..............................</h1>
-
-    <label for="stlye-select">Select a Content Image</label>
-    <select id="content-select">
-      <option value="allen-iverson">Allen Iverson</option>
-      <option value="everest">Mt. Everest</option>
-      <option value="file-upload">Upload file</option>
-    </select>
 
     <h1>..............................</h1>
-    
     
     <canvas id="stylized" height="256"></canvas>
-
-
     
     <script src="style-transfer.js"></script>
   </body>
