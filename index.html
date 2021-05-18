@@ -11,40 +11,60 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
   </head>
   <body>
-    
-    <div id="content-image-block">
-      <img id="content-image" height="256" src="images/content.jpg"/>
-      <label for="content-select">Select a Content Image</label>
-      <select id="content-select">
-	<option value="allen-iverson">Allen Iverson</option>
-	<option value="everest">Mt. Everest</option>
-	<option value="file-upload">Upload file</option>
-      </select>
-    </div>
-    
-    <div id="style-images">
-      <div class="style-image-block" id="style-image-block-1">
-	<img class="style-image" id="style-image-1" height="256" src="images/style.jpg"/>
-	<input type="range" min="0" max="10" value="5" class="style-slider">
-	<label for="style-select">Select a Style Image</label>
-	<select class="style-select">
-	  <option value="starry-night">Starry Night</option>
-	  <option value="scream">Scream</option>
-	  <option value="udnie">Udnie</option>
-	  <option value="file-upload">Upload file</option>
-	</select>
-	<button class="remove-style-btn" id="remove-style-btn-1">Remove Style Image</button>
+    <div id="container">
+      
+      <div id="app-container">
+
+	<div id="content-btns-canvas-container">
+	  
+	  <div id="content-image-block">
+	    <img id="content-image" height="256" src="images/content.jpg"/>
+	    <div class="image-options">
+	      <label for="content-select">Select a Content Image</label>
+	      <select id="content-select">
+		<option value="allen-iverson">Allen Iverson</option>
+		<option value="everest">Mt. Everest</option>
+		<option value="file-upload">Upload file</option>
+	      </select>
+	    </div>
+	  </div>
+
+	  <div id="btns-container">
+	    <button id="style-transfer-btn">Transfer Style</button>
+	    <button id="add-style-image-btn">Add Another Style</button>
+	    <input type="file" id="file-upload" accept="image/*,.pdf">  
+	  </div>
+
+	  <div id="canvas-container">
+	    <canvas id="stylized" height="256"></canvas>
+	  </div>
+	  
+	</div>
+	
+	<div id="style-container">
+	  <div class="style-image-block" id="style-image-block-1">
+	    <img class="style-image" id="style-image-1" height="256" src="images/style.jpg"/>
+	    <div class="image-options">
+	      <label for="style-slider">Stylization Strength</label>
+	      <input type="range" min="0" max="10" value="7" class="style-slider">
+	      <label for="style-select">Select a Style Image</label>
+	      <select class="style-select">
+		<option value="starry-night">Starry Night</option>
+		<option value="scream">Scream</option>
+		<option value="udnie">Udnie</option>
+		<option value="file-upload">Upload file</option>
+	      </select>
+	      <button class="remove-style-btn" id="remove-style-btn-1">Remove Style Image</button>
+	    </div>
+	  </div>
+
+	</div>
+
       </div>
-    </div>    
-
-    <button id="add-style-image-btn">Combine Another Style</button>
-    <button id="style-transfer-btn">Transfer Style</button>
-
-    <input type="file" id="file-upload" accept="image/*,.pdf">
-
-    <h1>..............................</h1>
-    
-    <canvas id="stylized" height="256"></canvas>
+      <div id="writing-container">
+	<p>Some info on style transfer :).</p>
+      </div>
+    </div>
     
     <script src="style-transfer.js"></script>
   </body>

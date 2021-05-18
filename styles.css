@@ -1,7 +1,91 @@
+:root {
+    font-size: 62.5%; // Set 1rem == 10px
+}
+
+body {
+    /* font-family: $font-sans; */
+    /* color: $color-body; */
+    /* background-color: $color-bg; */
+    font-size: 2.2rem;
+}
+#container {
+    /* max-width: 1000px; */
+    margin: 25px auto 0px auto;
+}
+#app-container {
+    padding: 4rem 2rem 2rem 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    height: 100%;
+    border: 2px solid #8D8D8D;    
+
+    /* display: grid; */
+    /* grid-template-columns: 1fr 1fr; */
+    /* /\*100px height default and large as needed*\/ */
+    /* grid-auto-rows: minmax(10rem, auto);  */
+    /* /\* grid-column-gap: 1rem; *\/ */
+    /* /\* grid-row-gap: 1rem; *\/ */
+    /* grid-gap: 2rem; */
+}
+
+
+#app-container > div {
+    border: 2px solid #0f0f;
+}
+
+
+
+#content-btns-canvas-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr;
+    justify-items: center;
+    margin-bottom: 2rem;
+}
+
+
+
+
+#style-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 2rem;
+    justify-items: center;
+}
+
+.image-options {
+    /* justify-items: center; */
+    display: inline-grid;
+}
+
+#style-image-block {
+    float: right;
+
+
+}
+
+#btns-container button {
+    margin: 3rem;
+}
+
+#canvas-container {
+    border: 2px solid #f0f0;
+    
+}
+
+#stylized {
+    background: aqua;
+}
+    
+
+#writing-container {
+    max-width: 850px;
+    margin: 0 auto;
+    border: 2px solid #8D8D8D;
+}
+
 #remove-style-btn-1 {
     display: none;
 }
 #file-upload {
     display: none;
 }
-

@@ -1,24 +1,18 @@
 const model = new mi.ArbitraryStyleTransferNetwork();
 
-let contentImage = document.getElementById('content-image');
-let styleImage = document.getElementsByClassName('style-image')[0];
-
+const contentImage = document.getElementById('content-image');
+const styleImage = document.getElementsByClassName('style-image')[0];
 const stylizedCanvas = document.getElementById('stylized');
 const addStyleImageBtn = document.getElementById('add-style-image-btn');
 const styleTransferBtn = document.getElementById('style-transfer-btn');
-
 const fileUploader = document.getElementById('file-upload');
-const styleImageDiv = document.getElementById('style-images');
+const styleContainer = document.getElementById('style-container');
 const styleImageBlock = document.getElementById('style-image-block-1');
 const selectStyleList = document.getElementsByClassName('style-select')[0];
 const selectContentList = document.getElementById('content-select');
 
 let styleImageCount = 1
-
 //////////////////////////////////////////////////////////////////////
-// Document Management
-
-
 selectStyleList.addEventListener('change', () => {
 	uploadImage(selectStyleList, 'style');
     });
@@ -30,7 +24,6 @@ addStyleImageBtn.addEventListener('click', () => {
 styleTransferBtn.addEventListener('click', () => {
     stylize();
 });
-
 
 selectContentList.addEventListener('change', () => {
     uploadImage(selectContentList, 'content');
@@ -51,26 +44,32 @@ function getContentStyleRatio(styleWeights) {
 }
 
 function addNewStyleBlock() {
-    let block = styleImageBlock.cloneNode(true);
+    // Create copy of ".style-image-block", update some ids, and add to style image section.
     styleImageCount += 1;
+    let block = styleImageBlock.cloneNode(true);    
     block.id = `style-image-block-${styleImageCount}`;
+
     let img = block.querySelector('.style-image');
     img.id = `style-image-${styleImageCount}`;
+
     let styleSelectionList = block.querySelector('.style-select');    
     styleSelectionList.addEventListener('change', () => {
 	uploadImage(styleSelectionList, 'style', img);
     });
+
     let removeBtn = block.querySelector('.remove-style-btn');
     removeBtn.id = `remove-style-btn-${styleImageCount}`;
     removeBtn.addEventListener('click', () => block.remove());
-    styleImageDiv.appendChild(block);
+
+    styleContainer.appendChild(block);
 }
 
 function uploadImage(selectionList, styleOrContent, styleImg=styleImage) {
     let choice = selectionList.value;
     fileUploader.styleOrContent = styleOrContent;
     if (choice === 'file-upload') {
-	fileUploader.click();  // Selection triggers image processing chain
+	fileUploader.styleImage = styleImg;
+	fileUploader.click();
     } else if (styleOrContent === 'content') {
 	contentImage.src = 'images/' + choice + '.jpg';
     } else {
@@ -82,18 +81,14 @@ fileUploader.addEventListener('change', () => {
     if (fileUploader.styleOrContent === 'content') {
 	contentImage.src = URL.createObjectURL(fileUploader.files[0]);
     } else {
-	styleImage.src = URL.createObjectURL(fileUploader.files[0]);
+	fileUploader.styleImage.src = URL.createObjectURL(fileUploader.files[0]);
     }
 });
 
 //////////////////////////////////////////////////////////////////////
 // Style Transfer Functions
-function drawImage(image) {
-    if (Object.prototype.toString.call(image) === '[object ImageData]') {
-	stylizedCanvas.getContext('2d').putImageData(image, 0, 0);
-    } else if (Object.prototype.toString.call(image) === '[object HTMLImageElement]') {
-	stylizedCanvas.getContext('2d').drawImage(image, 0, 0);
-    }
+function drawImageData(image) {
+    stylizedCanvas.getContext('2d').putImageData(image, 0, 0);
 }
 
 function getStyle(styleImages, styleWeights, contentStyleRatio) {
@@ -124,6 +119,6 @@ async function stylize() {
     let contentStyleRatio = getContentStyleRatio(styleWeights);
     let style = getStyle(styleImages, styleWeights, contentStyleRatio);
     getStyledImageData(contentImage, style)
-	.then(drawImage)
+	.then(drawImageData)
     // model.dispose();  // Clean up model children tensors
 }
