@@ -2,7 +2,7 @@ const model = new mi.ArbitraryStyleTransferNetwork();
 
 const contentImage = document.getElementById('content-image');
 const styleImage = document.getElementsByClassName('style-image')[0];
-const stylizedCanvas = document.getElementById('stylized');
+const stylizedCanvas = document.getElementById('canvas');
 const addStyleImageBtn = document.getElementById('add-style-image-btn');
 const styleTransferBtn = document.getElementById('style-transfer-btn');
 const fileUploader = document.getElementById('file-upload');
@@ -10,12 +10,17 @@ const styleContainer = document.getElementById('style-container');
 const styleImageBlock = document.getElementById('style-image-block-1');
 const selectStyleList = document.getElementsByClassName('style-select')[0];
 const selectContentList = document.getElementById('content-select');
+const saveStylizedBtn  = document.getElementById('save-stylized-image-btn');
 
 let styleImageCount = 1
 //////////////////////////////////////////////////////////////////////
+selectContentList.addEventListener('change', () => {
+    uploadImage(selectContentList, 'content');
+});
+
 selectStyleList.addEventListener('change', () => {
-	uploadImage(selectStyleList, 'style');
-    });
+    uploadImage(selectStyleList, 'style');
+});
 
 addStyleImageBtn.addEventListener('click', () => {
     addNewStyleBlock();
@@ -25,9 +30,6 @@ styleTransferBtn.addEventListener('click', () => {
     stylize();
 });
 
-selectContentList.addEventListener('change', () => {
-    uploadImage(selectContentList, 'content');
-});
 
 function getStyleImages() {
     return Array.from(document.getElementsByClassName('style-image'));
@@ -120,5 +122,6 @@ async function stylize() {
     let style = getStyle(styleImages, styleWeights, contentStyleRatio);
     getStyledImageData(contentImage, style)
 	.then(drawImageData)
+    saveStylizedBtn.style.display = "block";
     // model.dispose();  // Clean up model children tensors
 }
