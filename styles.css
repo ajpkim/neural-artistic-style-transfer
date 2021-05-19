@@ -1,91 +1,84 @@
 :root {
     font-size: 62.5%; // Set 1rem == 10px
 }
-
 body {
-    /* font-family: $font-sans; */
-    /* color: $color-body; */
-    /* background-color: $color-bg; */
     font-size: 2.2rem;
+    background-color:  #292a44;
+    color: #e4e9ee;
 }
 #container {
-    /* max-width: 1000px; */
     margin: 25px auto 0px auto;
 }
 #app-container {
+    background: white;
+    color: black;
     padding: 4rem 2rem 2rem 2rem;
     max-width: 1000px;
     margin: 0 auto;
     height: 100%;
-    border: 2px solid #8D8D8D;    
-
-    /* display: grid; */
-    /* grid-template-columns: 1fr 1fr; */
-    /* /\*100px height default and large as needed*\/ */
-    /* grid-auto-rows: minmax(10rem, auto);  */
-    /* /\* grid-column-gap: 1rem; *\/ */
-    /* /\* grid-row-gap: 1rem; *\/ */
-    /* grid-gap: 2rem; */
 }
-
-
-#app-container > div {
-    border: 2px solid #0f0f;
-}
-
-
-
 #content-btns-canvas-container {
     display: grid;
-    grid-template-columns: 2fr 1fr 2fr;
+    grid-template-columns: 3fr 1fr 3fr;
     justify-items: center;
     margin-bottom: 2rem;
 }
-
-
-
-
+#content-image-block {
+    display: inline-grid;
+    justify-items: center;
+}
+.image-options {
+    display: grid;
+    justify-items: center;
+    line-height: 2;
+}
+.image-options label {
+    font-size: 1.8rem;
+}
+#btns-container {
+    padding: 2rem;
+}
+#btns-container button {
+    font-weight: bold;
+    border-radius: 0.8rem;
+    padding: 1rem;
+    width: 12rem;
+    margin-bottom: 2rem;
+}
+#style-transfer-btn {
+    background: #ffbbe8;    
+}
+#add-style-image-btn {
+    background: #acdbff;
+}
+#save-stylized-image-btn {
+    display: none;
+    background: #acdbff;
+}
+#canvas {
+    background: #778899;
+}
 #style-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    grid-gap: 2rem;
+    grid-gap: 1rem;
     justify-items: center;
 }
-
-.image-options {
-    /* justify-items: center; */
-    display: inline-grid;
-}
-
 #style-image-block {
-    float: right;
-
-
+    display: grid;
+    justify-items: center;
 }
-
-#btns-container button {
-    margin: 3rem;
+#remove-style-btn-1 {
+    display: none;
 }
-
-#canvas-container {
-    border: 2px solid #f0f0;
-    
+.remove-style-btn {
+    margin-top: 0.8rem;
 }
-
-#stylized {
-    background: aqua;
-}
-    
-
+#file-upload {
+    display: none;
+}    
 #writing-container {
     max-width: 850px;
     margin: 0 auto;
     border: 2px solid #8D8D8D;
-}
-
-#remove-style-btn-1 {
-    display: none;
-}
-#file-upload {
-    display: none;
 }
