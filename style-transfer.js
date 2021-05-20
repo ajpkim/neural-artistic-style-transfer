@@ -64,6 +64,11 @@ function addNewStyleBlock() {
     removeBtn.addEventListener('click', () => block.remove());
 
     styleContainer.appendChild(block);
+
+    if (styleImageCount % 2 === 1) {
+	console.log('adding empty col');
+	styleContainer.appendChild(document.querySelector('.empty-col').cloneNode());
+    }
 }
 
 function uploadImage(selectionList, styleOrContent, styleImg=styleImage) {
