@@ -2,7 +2,8 @@ const model = new mi.ArbitraryStyleTransferNetwork();
 
 const contentImage = document.getElementById('content-image');
 const styleImage = document.getElementsByClassName('style-image')[0];
-const stylizedCanvas = document.getElementById('canvas');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
 const addStyleImageBtn = document.getElementById('add-style-image-btn');
 const styleTransferBtn = document.getElementById('style-transfer-btn');
 const fileUploader = document.getElementById('file-upload');
@@ -14,22 +15,29 @@ const saveStylizedBtn  = document.getElementById('save-stylized-image-btn');
 
 let styleImageCount = 1
 //////////////////////////////////////////////////////////////////////
+
+
 selectContentList.addEventListener('change', () => {
     uploadImage(selectContentList, 'content');
 });
-
 selectStyleList.addEventListener('change', () => {
     uploadImage(selectStyleList, 'style');
 });
-
 addStyleImageBtn.addEventListener('click', () => {
     addNewStyleBlock();
 });
-
 styleTransferBtn.addEventListener('click', () => {
     stylize();
 });
-
+saveStylizedBtn.addEventListener('click', () => {
+    let downloadLink = document.createElement('a');
+    downloadLink.setAttribute('download', 'stylized.png');
+    canvas.toBlob(function(blob) {
+	let url = URL.createObjectURL(blob);
+	downloadLink.setAttribute('href', url);
+	downloadLink.click();
+    });
+});
 
 function getStyleImages() {
     return Array.from(document.getElementsByClassName('style-image'));
@@ -94,11 +102,15 @@ fileUploader.addEventListener('change', () => {
 
 //////////////////////////////////////////////////////////////////////
 // Style Transfer Functions
-function drawImageData(image) {
-    stylizedCanvas.getContext('2d').putImageData(image, 0, 0);
+function drawImageData(imageData) {
+    let ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.width = imageData.width;
+    canvas.height = Math.min(256, imageData.height);
+    ctx.putImageData(imageData, 0, 0);
 }
 
-function getStyle(styleImages, styleWeights, contentStyleRatio) {
+function getStyle(styleImages, styleWeights, contentStyleRatio) {    
     let styles = styleImages.map(image => model.predictStyleParameters(image));
     let weightSum = styleWeights.reduce((a, b) => { return a + b; });
     styleWeights = styleWeights.map(weight => weight  / weightSum );
