@@ -1,14 +1,5 @@
 Live at [[https://ajpkim.com/projects/style-transfer][ajpkim.com/projects/style-transfer]].
 
-* Table of Contents                                                     :TOC:
-- [[Overview][Overview]]
-- [[Model Architecture][Model Architecture]]
-- [[Representing Style and Content][Representing Style and Content]]
--  [[Recent History of ML Style Transfer][Recent History of ML Style Transfer]]
-  - [[Gatys et al. 2015][Gatys et al. 2015]]
-  - [[Johnson et al. 2016][Johnson et al. 2016]]
-  - [[Ghiasi et al. 2017][Ghiasi et al. 2017]]
-
 * Overview
 :PROPERTIES:
 :ID:       0e7b5bca-7a27-4b0a-b6db-0862fa4eed48
