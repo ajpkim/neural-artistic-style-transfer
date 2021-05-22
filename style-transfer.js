@@ -15,20 +15,22 @@ const saveStylizedBtn  = document.getElementById('save-stylized-image-btn');
 
 let styleImageCount = 1
 //////////////////////////////////////////////////////////////////////
-
-
 selectContentList.addEventListener('change', () => {
     uploadImage(selectContentList, 'content');
 });
+
 selectStyleList.addEventListener('change', () => {
     uploadImage(selectStyleList, 'style');
 });
+
 addStyleImageBtn.addEventListener('click', () => {
     addNewStyleBlock();
 });
+
 styleTransferBtn.addEventListener('click', () => {
     stylize();
 });
+
 saveStylizedBtn.addEventListener('click', () => {
     let downloadLink = document.createElement('a');
     downloadLink.setAttribute('download', 'stylized.png');
@@ -37,6 +39,14 @@ saveStylizedBtn.addEventListener('click', () => {
 	downloadLink.setAttribute('href', url);
 	downloadLink.click();
     });
+});
+
+fileUploader.addEventListener('change', () => {
+    if (fileUploader.styleOrContent === 'content') {
+	contentImage.src = URL.createObjectURL(fileUploader.files[0]);
+    } else {
+	fileUploader.styleImage.src = URL.createObjectURL(fileUploader.files[0]);
+    }
 });
 
 function getStyleImages() {
@@ -54,15 +64,14 @@ function getContentStyleRatio(styleWeights) {
 }
 
 function addNewStyleBlock() {
-    // Create copy of ".style-image-block", update some ids, and add to style image section.
     styleImageCount += 1;
-    let block = styleImageBlock.cloneNode(true);    
+    let block = styleImageBlock.cloneNode(true);
     block.id = `style-image-block-${styleImageCount}`;
 
     let img = block.querySelector('.style-image');
     img.id = `style-image-${styleImageCount}`;
 
-    let styleSelectionList = block.querySelector('.style-select');    
+    let styleSelectionList = block.querySelector('.style-select');
     styleSelectionList.addEventListener('change', () => {
 	uploadImage(styleSelectionList, 'style', img);
     });
@@ -92,31 +101,22 @@ function uploadImage(selectionList, styleOrContent, styleImg=styleImage) {
     }
 }
 
-fileUploader.addEventListener('change', () => {
-    if (fileUploader.styleOrContent === 'content') {
-	contentImage.src = URL.createObjectURL(fileUploader.files[0]);
-    } else {
-	fileUploader.styleImage.src = URL.createObjectURL(fileUploader.files[0]);
-    }
-});
-
 //////////////////////////////////////////////////////////////////////
 // Style Transfer Functions
 function drawImageData(imageData) {
-    let ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     canvas.width = imageData.width;
     canvas.height = Math.min(256, imageData.height);
     ctx.putImageData(imageData, 0, 0);
 }
 
-function getStyle(styleImages, styleWeights, contentStyleRatio) {    
+function getStyle(styleImages, styleWeights, contentStyleRatio) {
     let styles = styleImages.map(image => model.predictStyleParameters(image));
     let weightSum = styleWeights.reduce((a, b) => { return a + b; });
     styleWeights = styleWeights.map(weight => weight  / weightSum );
     let weightedStyles = styles.map((style, i) => style.mul(styleWeights[i]));
     let style = weightedStyles.reduce((a,b) => a.add(b));
-    
+
     // Blend the style/content based on stylization strength prescribed by styleWeights
     let contentStyle = model.predictStyleParameters(contentImage).mul(contentStyleRatio);
     style = style.mul(1 - contentStyleRatio).add(contentStyle);
@@ -140,5 +140,4 @@ async function stylize() {
     getStyledImageData(contentImage, style)
 	.then(drawImageData)
     saveStylizedBtn.style.display = "block";
-    // model.dispose();  // Clean up model children tensors
 }
